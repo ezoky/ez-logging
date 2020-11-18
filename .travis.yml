@@ -1,0 +1,15 @@
+dist: bionic
+language: scala
+scala:
+   - 2.12.11
+   - 2.11.12
+   - 2.13.3
+env:
+- JDK=oraclejdk8
+- JDK=openjdk8
+- JDK=openjdk11
+before_script:
+  - jdk_switcher use $JDK
+script:
+- sbt "++ ${TRAVIS_SCALA_VERSION}!" test
+
