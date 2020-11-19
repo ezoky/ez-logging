@@ -3,7 +3,7 @@ language: scala
 env:
   - JDK=openjdk8
 script:
-  - sbt + test
+  - sbt +test
 cache:
   directories:
     - $HOME/.cache/coursier
