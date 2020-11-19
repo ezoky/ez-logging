@@ -1,13 +1,9 @@
 dist: trusty
 language: scala
-scala:
-  - 2.11.12
-  - 2.12.11
-  - 2.13.3
 env:
   - JDK=openjdk8
 before_script:
   - jdk_switcher use $JDK
 script:
-  - sbt "++ ${TRAVIS_SCALA_VERSION}!" test
+  - sbt + test
 
