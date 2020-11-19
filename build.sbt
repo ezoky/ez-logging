@@ -3,6 +3,8 @@ import sbt.Keys.libraryDependencies
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+Global / pgpSigningKey := Some("F7701D6ABE8EA22920ACE6D0A983103B964EB5A0")
+
 name := "ez-logging"
 description := "A simple Scala logging toolset that provides with an opinionated API on logging system and some convenient utilities to simplify developer experience."
 
