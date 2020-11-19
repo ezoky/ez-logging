@@ -4,10 +4,10 @@
 
 package com.ezoky.ezlogging
 
+import com.ezoky.ezlogging.MessageLevel.{NoLog => NoLogger, Debug => DebugLogger, Error => ErrorLogger, Info => InfoLogger, Trace => TraceLogger, Warn => WarnLogger}
 import com.ezoky.ezlogging.{MessageLevel => SafeMessageLevel}
-import com.ezoky.ezlogging.MessageLevel.{NoLog, Debug => DebugLogger, Error => ErrorLogger, Info => InfoLogger, Trace => TraceLogger, Warn => WarnLogger}
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 /**
  * @author gweinbach on 13/10/2020
@@ -16,7 +16,7 @@ import scala.util.Try
 object Safe
   extends EzLoggable {
 
-  val None: SafeMessageLevel = NoLog
+  val NoLog: SafeMessageLevel = NoLogger
 
   val Trace: SafeMessageLevel = TraceLogger[Safe.type]()
 
@@ -34,15 +34,15 @@ object Safe
    */
   private val DefaultMessageTemplate = "%s: %s"
 
-  def trialFromEither[E <: Throwable, T](tryT: => Either[E, T],
-                                         showException: Boolean = true,
-                                         messageLevel: SafeMessageLevel = Error,
-                                         messageTemplate: => String = DefaultMessageTemplate): Either[String, T] =
+  def trialFromTry[T](tryT: => Try[T],
+                      showException: Boolean = true,
+                      messageLevel: SafeMessageLevel = Error,
+                      messageTemplate: => String = DefaultMessageTemplate): Either[String, T] =
 
-    tryT.fold(
+    tryT match {
+      case Failure(exception) =>
 
-      // Turns Throwable into a message and logs as side effect
-      exception => {
+        // Turns Throwable into a message and logs as side effect
         val message = String.format(
           messageTemplate,
           exception.getClass.getName,
@@ -60,19 +60,25 @@ object Safe
         else {
           messageLevel.log(message)
         }
-
         Left(message)
-      },
 
-      x =>
+      case Success(x) =>
         Right(x)
+    }
+
+  def trialFromEither[E <: Throwable, T](eitherT: => Either[E, T],
+                                         showException: Boolean = true,
+                                         messageLevel: SafeMessageLevel = Error,
+                                         messageTemplate: => String = DefaultMessageTemplate): Either[String, T] = {
+    val tryT: Try[T] = eitherT.fold(
+      e =>
+        Failure(e),
+      t =>
+        Success(t)
     )
 
-  def trialFromTry[T](tryT: => Try[T],
-                      showException: Boolean = true,
-                      messageLevel: SafeMessageLevel = Error,
-                      messageTemplate: => String = DefaultMessageTemplate): Either[String, T] =
-    trialFromEither(tryT.toEither, showException, messageLevel, messageTemplate)
+    trialFromTry(tryT, showException, messageLevel, messageTemplate)
+  }
 
   def trial[T](t: => T,
                showException: Boolean = true,
@@ -90,6 +96,9 @@ object Safe
       showException,
       messageLevel,
       messageTemplate
-    ).toOption
+    ).fold(
+       _ => None,
+      r => Some(r)
+    )
 
 }
