@@ -14,9 +14,9 @@ import scala.reflect.runtime.universe.TypeTag
  * =Explicit usage=
  * A logger can be created for a specific type.
  * {{{
- * import com.ezoky.ezlogging.EzLogger
+ * import com.ezoky.ezlogging.EzLoggableType
  *
- * val intLogger = new EzLogger[Int]
+ * val intLogger = new EzLoggableType[Int]
  * intLogger.trace("This will be traced if Int log level is 'trace'")
  *
  * }}}
@@ -24,25 +24,27 @@ import scala.reflect.runtime.universe.TypeTag
  * =Implicit usage=
  * A logger is created implicitly and will provide this type with any usual log method.
  * {{{
- * import com.ezoky.ezlogging.EzLogger._
+ * import com.ezoky.ezlogging.EzLoggableType._
  *
  * "Toto".debug("A debug message")
  *  1.trace("Even an int can use trace")
  *  true.warn("A boolean can warn")
  *
  * }}}
- * Use cautiously as a new EzLogger instance will be created for every call
+ * Use cautiously as a new `EzLoggableType` instance will be created for every call
  *
  * @author gweinbach on 14/10/2020
  * @since 0.1.0
  */
-class EzLogger[T: TypeTag]
+class EzLoggableType[T: TypeTag]
   extends EzLoggable {
 
   override protected lazy val loggerId: String = implicitly[TypeTag[T]].tpe.typeSymbol.fullName
 }
 
-object EzLogger {
-  
-  implicit def ezLoggable[T: TypeTag](t: T): EzLogger[T] = new EzLogger[T]
+object EzLoggableType {
+
+  implicit class EzLogger[T: TypeTag](t: T)
+    extends EzLoggableType[T]
+
 }

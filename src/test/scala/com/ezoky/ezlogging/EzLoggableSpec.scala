@@ -142,8 +142,7 @@ class EzLoggableSpec
     new {
       val msg = "msg"
       val cause = new RuntimeException("cause")
-      val underlying = mock[org.slf4j.Logger]
-      when(p(underlying)).thenReturn(isEnabled)
-      val logger = EzLoggable(underlying)
+      val logger = Testing.EzLoggable("TestLogger", p, isEnabled)
+      val underlying = logger.logger
     }
   }
