@@ -23,7 +23,6 @@ trait EzLoggable {
   /**
    * Must be overriden
    */
-  @transient
   protected val loggerId: String
 
   /**
