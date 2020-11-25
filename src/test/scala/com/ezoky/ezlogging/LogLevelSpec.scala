@@ -102,6 +102,19 @@ class LogLevelSpec
     }
   }
 
+
+  "A LogLevel" should {
+    "have its log method enabled depending on log config (here logback.xml)" in {
+
+      assert(LogLevel.Error[String]().isEnabled)
+      assert(LogLevel.Warn[String]().isEnabled)
+      assert(LogLevel.Info[String]().isEnabled)
+      assert(!LogLevel.Debug[String]().isEnabled)
+      assert(!LogLevel.Trace[String]().isEnabled)
+      assert(LogLevel.NoLog.isEnabled)
+    }
+  }
+
   "A LogLevel" can {
     "be built from a string representation of the loglevel" in {
 
@@ -114,18 +127,6 @@ class LogLevelSpec
 
       assert(LogLevel.parse[Int]("error:").isEmpty)
       assert(LogLevel.parse[Int]("warning").isEmpty)
-    }
-  }
-
-  "A LogLevel" should {
-    "have its log method enabled depending on log config" in {
-
-      assert(LogLevel.Error[String]().isEnabled)
-      assert(LogLevel.Warn[String]().isEnabled)
-      assert(LogLevel.Info[String]().isEnabled)
-      assert(!LogLevel.Debug[String]().isEnabled)
-      assert(!LogLevel.Trace[String]().isEnabled)
-      assert(LogLevel.NoLog.isEnabled)
     }
   }
 
