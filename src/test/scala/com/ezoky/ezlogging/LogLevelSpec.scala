@@ -102,4 +102,31 @@ class LogLevelSpec
     }
   }
 
+  "A LogLevel" can {
+    "be built from a string representation of the loglevel" in {
+
+      assert(LogLevel.parse[Int]("erRor ").isDefined)
+      assert(LogLevel.parse[Int]("  Warn ").isDefined)
+      assert(LogLevel.parse[Int]("INFO").isDefined)
+      assert(LogLevel.parse[Int]("Debug").isDefined)
+      assert(LogLevel.parse[Int]("\t trace").isDefined)
+      assert(LogLevel.parse[Int]("NoLog").isDefined)
+
+      assert(LogLevel.parse[Int]("error:").isEmpty)
+      assert(LogLevel.parse[Int]("warning").isEmpty)
+    }
+  }
+
+  "A LogLevel" should {
+    "have its log method enabled depending on log config" in {
+
+      assert(LogLevel.Error[String]().isEnabled)
+      assert(LogLevel.Warn[String]().isEnabled)
+      assert(LogLevel.Info[String]().isEnabled)
+      assert(!LogLevel.Debug[String]().isEnabled)
+      assert(!LogLevel.Trace[String]().isEnabled)
+      assert(LogLevel.NoLog.isEnabled)
+    }
+  }
+
 }
