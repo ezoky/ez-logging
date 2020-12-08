@@ -28,7 +28,7 @@ trait EzLoggable {
   /**
    * Can be overriden, but I don't see any good reason to do it except for test reason (replacing it with a mock).
    * This is the reason for the `private[ezlogging]` modifier.
-   * If overriden, shis should be kept consistent with [[loggerId]] value
+   * If overriden, this should be kept consistent with [[loggerId]] value
    *
    * Exceptions can only be logged at Error level.
    */
