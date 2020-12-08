@@ -39,7 +39,13 @@ object Common {
     pomIncludeRepository := (_ => false),
 
     // sonatype credentials
-    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
+//    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
+    credentials += Credentials(
+      "Sonatype Nexus Repository Manager",
+      "oss.sonatype.org",
+      sys.env.getOrElse("SONATYPE_USERNAME","<undefined sonatype username>"),
+      sys.env.getOrElse("SONATYPE_PASSWORD","<undefined sonatype password>")
+    ),
 
     scalaReflectModule := Dependencies.`scala-reflect`(scalaVersion.value),
 

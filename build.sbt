@@ -4,8 +4,8 @@ import sbt.Keys.libraryDependencies
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // used to sign jars
-Global / pgpSigningKey := sys.props.get("PGP_SIGNING_KEY")
-Global / pgpPassphrase := sys.props.get("PGP_PASSPHRASE").map(_.toCharArray)
+Global / pgpSigningKey := sys.env.get("PGP_SIGNING_KEY")
+Global / pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toCharArray)
 
 name := "ez-logging"
 description := "A simple Scala logging toolset that provides with an opinionated API on logging system and some convenient utilities to simplify developer experience."
