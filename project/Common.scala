@@ -40,13 +40,6 @@ object Common {
 
     // sonatype credentials
     credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
-    // GPG key to sign published jars
-    //    credentials += Credentials(
-//      "GnuPG Key ID",
-//      "gpg",
-//      "F7701D6ABE8EA22920ACE6D0A983103B964EB5A0", // key identifier
-//      "ignored" // this field is ignored; passwords are supplied by pinentry
-//    ),
 
     scalaReflectModule := Dependencies.`scala-reflect`(scalaVersion.value),
 
