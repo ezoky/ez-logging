@@ -18,15 +18,15 @@ jobs:
     - stage: publish
       script: sbt +publishSigned
       if: branch = develop
-cache:
-  directories:
-    - "$HOME/.cache/coursier"
-    - "$HOME/.ivy2/cache"
-    - "$HOME/.sbt"
-before_cache:
-  - rm -fv $HOME/.ivy2/.sbt.ivy.lock
-  - find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
-  - find $HOME/.sbt        -name "*.lock"               -print -delete
+#cache:
+#  directories:
+#    - "$HOME/.cache/coursier"
+#    - "$HOME/.ivy2/cache"
+#    - "$HOME/.sbt"
+#before_cache:
+#  - rm -fv $HOME/.ivy2/.sbt.ivy.lock
+#  - find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
+#  - find $HOME/.sbt        -name "*.lock"               -print -delete
 before_install:
   - openssl aes-256-cbc -K $encrypted_404964577bd1_key -iv $encrypted_404964577bd1_iv -in all.gpg.enc -out all.gpg -d
   - gpg --batch --passphrase "${PGP_PASSPHRASE}" --import all.gpg
