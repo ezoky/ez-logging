@@ -6,7 +6,6 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 // used to sign jars
 Global / pgpSigningKey := sys.env.get("PGP_SIGNING_KEY")
 Global / pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toCharArray)
-Global / pgpKeyRing := Some(file("all.gpg"))
 
 name := "ez-logging"
 description := "A simple Scala logging toolset that provides with an opinionated API on logging system and some convenient utilities to simplify developer experience."
