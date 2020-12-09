@@ -4,7 +4,8 @@ import sbt.Keys.libraryDependencies
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 // used to sign jars
-Global / pgpSigningKey := sys.env.get("PGP_SIGNING_KEY")
+//Global / pgpSigningKey := sys.env.get("PGP_SIGNING_KEY")
+usePgpKeyHex(sys.env.getOrElse("PGP_SIGNING_KEY","undefined PGP signing key"))
 //Global / pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toCharArray)
 
 name := "ez-logging"
