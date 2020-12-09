@@ -40,7 +40,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-Xfatal-warnings", // turns compiler warnings into errors
 )
 
-// Enables SemantcDB compiler for Scalafix
+// Enables SemanticDB compiler for Scalafix
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 // Enables Scalafix complex rules to work with Scala 2.13
