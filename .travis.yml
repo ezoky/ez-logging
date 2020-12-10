@@ -7,7 +7,7 @@ env:
     - JDK=openjdk8
   global:
 # a simple fix to avoid a bug during jar signature: 'gpg: signing failed: Inappropriate ioctl for device'
-#    - GPG_TTY=$(tty)
+    - GPG_TTY=$(tty)
     - secure: KCBxDuUIrOYwNkNAUPEnDTysRg2c6ABa9g3ziZqimKCeQ/qxFbpezOJN1mc56BL5yhO1kS6hcNuzUZO7Fg+e1+/zv+sjVnb0GW3WIYNRzfvU0BaAlyZroms6hHkXyrsohjbawMvPnGPRZI75QC7OP5Kemfmw19qnK9OnWWaViEQX+CW5FykbcYEr7dxrSwHXQ6GcKrWB1S9+o9nD1+XsiaOily4aDGRVJLNGcUrjNXKu9IeXAi2v1TuFpSsGDxMSwWJwzH8Ss5MVYW3gcjhfwaP3JMBqseafnMk+luGNBOV0oS3JG+UV3eKVA3j19H5MGpjCgFTQfsZXqq+Him4CUULaHR3NthXlMY77jQKZOkqfFai6ygOAm3zgVeuh+Obml8bCgNj7ccewd8+lo/ftvG/8JuxxC2g/FauwNyIQiO1au7ygjT8K6Eex+QHT4qwl6gj+BYAnR+KSqO74RXad8ZCt4yKNDkNzS4xF2MbWle2d3/dR1cWkz/CsOvkOx4uud844uP7OvG2fW3cJJnNtwcUMoKA6FSsO2T9mX3Kj99wczrEUQSLwiFdgrT/X5Y1nSDr5RTRjq+mMnDNmfY+o1j/PlZKcPc7+wF8faX8SvozK2eAsQTckC1oR0Jh/kh9/yWZ4yb/WxqsnR1gNf1xuiqXAgzjyW6gisCAau5kUtQk=
     - secure: U46BSIOW9oGPvunRbmCtuE9fnZr+L1Sr1WG7xWIs52Y3I8lZhXSHrQ7fDuTK9jINrlVBGumh/kROiamnn8uK74p6sEW0T+Mrw2VHUrBdoTsjaXXT8wpxtI+R5W5fT5Z61P+4svLC/qIkrPs3GCor8sXCNEUY9my+T7/gmFjuwy+0wvyJYDm+FZLh0TRxsFOGLGXHQa0wmsa9TqunIex3GsosU4+3bz2F3BCBS0ZTcwTk64IrLRzAp9r2Hjfs2o7JkqYR46xbkALvxOMmFL3Gv0UXcch5WrP1MtxFFR9FRe3RLcNaJ2E+I/dbNRFYBuZ2/3BjlST632YSWDnSUsh3xC01SM2xCP7dVewqQ3JcdsNKTfnAPjcE3BZrPrn/pxGRWcESYPnblorlneMty3w8kRAgtDfIhAY4JPZEUYb9Noy8flRRvCl2gJz5w3f8cOrU1S9EqdwMU+NDMde3yFbOt1G3YdGFOGIhAE2XybsdHegdwHCMb5h/HhT3iQbUh3f457H92iwm1XrQiDn2nj5aXLjclqW21RZyWz9WV/QEfj/pLNyFNB4ccYY80EBpxh5MQLEajfTHcJ/iKVTpJ5ehP2+Val3/9PzIzSRcqHUewXnJHrBpnr76CSjV5iUjXaWV2RvJtIxfDXxZiQBmG7r7ekVe30Nc8Ce/Jji6ARAffQ4=
     - secure: RfIqJ14+R950v4Vglrfw/szxjKW9VBwuoKQ7bVMt90+dyG6D5tQlB7OJq64/TNdzfBtxjJ1AylMoRmdCxafRC6BWa/wLasREtFBJwWd2x7tOZQc4xKMVKIat2FLseNn4Mcc8VVBl9BzDpF+p5MpF/OcEsRmOFj8QD+m4aHWFdnwUZ27ECt8uH833hKYbDrrQOvyFbLez/z/eGks/uDuCEALCK7RbtuA2R4PijVEHw9LuFI6MKlH6qNWeSQIF3VUel00OV0J/pssIVYJuihJtD64WSm/Rw7lc+fG35meDSdYtfDNSjkfkNRHFolHlT6kQM7q+ZTc36a6Nb/JWWJsANYTZtKAvd4RH3kBOlKgxOCNFU3IZaiWZ5SJReex2SRN8uAiiPlBxuMvIUGkPJuepKNde1DBPOMBEsOtP/OCg30eoH165bP577BRop/djkGIDQxDiBE+D5CwHbVT91n310+USrP0s0VNXZY5ACziVRG/4qhB1KkPv2t/iwef2Ubhw2W7zj8NZ8Dp3pb4d026cMVi/uaeJSQfLrG/yjaLatAfvFCr5/fEYIlDKh3xq1xUwNPIev0vwfC3QwsvHW/tDoFSbVUUgez5SGwoJfRuDDZpfvoM0wTdi61P4GvWdpPie750XBOB3FFS4F1/BbcRGj5avgBioZ3zRzBUefbTYsOY=
@@ -34,3 +34,4 @@ jobs:
 before_install:
   - openssl aes-256-cbc -K $encrypted_404964577bd1_key -iv $encrypted_404964577bd1_iv -in all.gpg.enc -out all.gpg -d
   - gpg --batch --passphrase "${PGP_PASSPHRASE}" --import all.gpg
+  - echo $GPG_TTY
