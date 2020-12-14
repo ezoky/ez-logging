@@ -12,9 +12,12 @@ env:
     - secure: JxnAgyF33Vi8ZvrF3KU/th9j5SnJ+z10ICPywNnxdnTmprVnLy3fdZ82YW5Bt9iqqWE5fP3hphBL9uEn6uNvsNwaEsaer/Lrlupf17YOJ8Lriq6M4zYhI00Fbc77fQU0vRtcY5ppyI7GkKtnBa/zCOfHpcRSmHF1p0bBW/UCUMfJstDK8n7Edlqy7W7yVa2xtoDt0+Z+osV89EJ0GX4IdLpn5GfcDSN83ATCRosVjZyBHkq3r21+bfRvn6k1htFEiu5uW2Km4ex2nd+2MN3DkSA3LtJ+vU6tw5kV1yKQ2gSi8hSg6OgtguoQxSSigyJHb+4wIRxTxtWM1Fl1hrFL6dL/OBzrb76BIEXUlXgvfpBvdvHDb/6E63siGbmrCYMMMoTx9XoThVmZCw6LX7ASA7l4ImfHo0b9d6GGSFI9u8WM2ApNNQz3fd8XEC1AHzuzYbJZmfmL1+/tfrXfXzmlC7OpcL7b1WNBuVB/wRnRFossjL6Bw0kgPcsN2fz6ICc/eQYD1FBtYXZ0R26+cB4laimz4NXMfAsYJOa1karsNA3lVaRuWDmVfvGnLH78Jy8yLkFZHvNt9NF70cm3T7n9alPzxBjBgCbvvDKu9ZiuCImG2gFBePQsOeb2Eqi2a3bUBorZ47VUw3P+ezP8wF1K6JNrPd8ArqmMBxeOXhynD/A=
     - secure: DXJB4ga1F9lRAQPcbQXCy1I02DQW91LZOB57zyyyQNpZ6Ly25KKePm+mQ/CB6JyPNNgEXJakFkqfsTf5c8W//qRkaaM03fVKckoZ2pApaIZojz4w41Dw3K3B9vJ7nxsZmGQaMZuteN2+dKU07fLZbLLUQVPHtVa4M6bvdJ1cmuR8VRVKgK0S2nu2y2CVzrm/Mb49bQWdCYjJUthoF/cZflZAuicI7/90qW8mBhFFdO1b1n+QVWD4UBZzuldZ0xW8Z9RTZCaqlbbZ/LmdHYwqFvaf3jUD7/TNJ8aFjKnePg+bctvEsQyWYmaJR3a6b5LWjFDfUNCZo/KqJzCbdw+y7cH9ksy1El4TO4QobSbbB5MpLOE/OVbM4rdJcTfqDsjN98+PRkGVui924yxPCvvSuH8NXeSchHGwRW2ox0k5px+q3kqGIudoveN6a9O1ZP7VFXasaPbwvdh/mFIUezL5grS0aggdKabkl6bAQzRUhuyHOCJnIRv9Zv/k7QJeCFVBBy6XcFPSYTa5+CTQR8Lz/rPpYLNhPBxZvFPNL7pRzLXXvXn32PV/LIQEwbKYOnL9IOEkC21Z39X140QCEeMDxbXVR0zmX6Mwd+oFe9ofr6fGOXxeKDKXqNzynqlAo52e9G+rSdITjjAsRfrI2I4U9PKggufIRt+Hl3he81sXlQA=
 stages:
+  - test
   - publish
 jobs:
   include:
+    - stage: test
+      script: sbt ++$TRAVIS_SCALA_VERSION +test
     - stage: publish
       script: sbt ++$TRAVIS_SCALA_VERSION +publishSigned
       if: branch = develop
