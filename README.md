@@ -1,6 +1,6 @@
-# ez-logging
+# ez-logging [![Build Status](https://travis-ci.com/ezoky/ez-logging.svg?branch=master)](https://travis-ci.com/ezoky/ez-logging)
 
-A **fast**, **easy to use** set of logging tools wrapping [SLF4J](http://www.slf4j.org).
+A **fast**, **easy to use** set of logging tools wrapping [SLF4J](http://www.slf4j.org) in a functional manner.
 
 
 ## Getting ez-logging

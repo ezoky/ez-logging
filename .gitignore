@@ -23,3 +23,6 @@ project/plugins/project/
 target
 project/project
 
+# Avoid committing GPG keys by mistake
+*.gpg
+

@@ -7,8 +7,13 @@ object Dependencies {
 
   object Versions {
 
-    val scala = "2.13.3"
-    val dotty = "3.0.0-M1"
+    val scala211 = "2.11.12"
+    val scala212 = "2.12.12"
+    val scala213 = "2.13.3"
+    val scala3 = "3.0.0-M1"
+
+    val scala = scala213
+    val dotty = scala3
 
     val ScalaParserCombinator = "1.1.2"
 
@@ -57,7 +62,7 @@ object Dependencies {
   }
 
   // Scala libraries
-  val `scala-reflect` = "org.scala-lang" % "scala-reflect" % Versions.scala
+  def `scala-reflect`(scalaVersionValue: String): ModuleID = "org.scala-lang" % "scala-reflect" % scalaVersionValue
   val `scala-parser-combinator` = "org.scala-lang.modules" %% "scala-parser-combinators" % Versions.ScalaParserCombinator
 
   // Compiler plugin
@@ -191,5 +196,7 @@ object Dependencies {
   val Overrides = Seq(
     Dependencies.`slf4j-api` // to force SLF4J version over the one pulled by logback
   )
-  
+
+  val scalaReflectModule = settingKey[ModuleID]("scala-reflect module depending on current scala version")
 }
+

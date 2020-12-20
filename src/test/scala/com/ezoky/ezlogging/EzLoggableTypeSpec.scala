@@ -11,11 +11,11 @@ import org.scalatest.wordspec.AnyWordSpec
  * @author gweinbach on 14/10/2020
  * @since 0.1.0
  */
-class EzLoggerSpec
+class EzLoggableTypeSpec
   extends AnyWordSpec
     with MockitoSugar {
 
-  import EzLogger._
+  import EzLoggableType._
 
   class A {
     this.info("info is available on any object")
@@ -26,7 +26,7 @@ class EzLoggerSpec
 
       import scala.reflect.runtime.universe.typeOf
 
-      val ezLogger = new EzLogger[A]
+      val ezLogger = new EzLoggableType[A]
 
       val slf4JLogger = ezLogger.logger
       assert(slf4JLogger.getName == typeOf[A].typeSymbol.fullName)
@@ -43,6 +43,12 @@ class EzLoggerSpec
         true.warn("A boolean can warn")
         new A {}
       """)
+
+      // Just to please test coverage
+      "Toto".debug("A debug message")
+      1.trace("Even an int can use trace")
+      true.warn("A boolean can warn")
+      new A {}
 
       assertDoesNotCompile(
         """
