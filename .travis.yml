@@ -19,7 +19,7 @@ stages:
   - name: publish
     if: (branch = master) AND (tag IS blank)
   - name: release
-    if: (branch = master) AND (tag =~ ^[vV][0-9]+\.[0-9]+\.[0-9]+(\-RC[0-9]+)?$ )
+    if: (tag =~ ^[vV][0-9]+\.[0-9]+\.[0-9]+(\-RC[0-9]+)?$ )
 jobs:
   include:
     - stage: test
