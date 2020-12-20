@@ -16,18 +16,18 @@ before_install:
   - gpg --batch --passphrase "${PGP_PASSPHRASE}" --import all.gpg
 stages:
   - test
-  - name: release
-    if: (branch = master) AND (tag =~ ^[vV] )
   - name: publish
     if: (branch = master) AND (tag IS blank)
+  - name: release
+    if: (tag =~ ^[vV][0-9]+\.[0-9]+\.[0-9]+(\-RC[0-9]+)?$ )
 jobs:
   include:
     - stage: test
       script: sbt ++$TRAVIS_SCALA_VERSION +test
-    - stage: release
-      script: sbt ++$TRAVIS_SCALA_VERSION -DdistVersion="${TRAVIS_TAG#[vV]}" +publishSigned
     - stage: publish
       script: sbt ++$TRAVIS_SCALA_VERSION +publishSigned
+    - stage: release
+      script: sbt ++$TRAVIS_SCALA_VERSION -DdistVersion="${TRAVIS_TAG#[vV]}" +publishSigned
 cache:
   directories:
     - "$HOME/.cache/coursier"
