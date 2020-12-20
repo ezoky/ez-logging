@@ -17,7 +17,7 @@ before_install:
 stages:
   - test
   - name: release
-    if: (branch = master) AND (tag =~ ^[vV][0-9]+\.[0-9]+\.[0-9]+(\-RC[0-9]+)?$ )
+    if: (branch = master) AND (tag =~ /^[vV][0-9]+\.[0-9]+\.[0-9]+(\-RC[0-9]+)?$/ )
   - name: publish
     if: (branch = master) AND (tag IS blank)
 jobs:
