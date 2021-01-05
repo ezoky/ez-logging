@@ -4,8 +4,6 @@
 
 package com.ezoky.ezlogging
 
-import org.slf4j.{Logger, LoggerFactory}
-
 /**
  * A high performance logger (based on underlying `org.slf4j.Logger`) with a very straightforward interface:
  * should be used through inheritance.
@@ -21,6 +19,11 @@ import org.slf4j.{Logger, LoggerFactory}
 trait EzLoggable {
 
   /**
+   * There must be an implicit [[EzLoggerFactory]] in the scope of the implementation
+   */
+  implicit protected val loggerFactory: EzLoggerFactory
+
+  /**
    * Must be overriden
    */
   protected val loggerId: String
@@ -33,7 +36,7 @@ trait EzLoggable {
    * Exceptions can only be logged at Error level.
    */
   @transient
-  private[ezlogging] lazy val logger: Logger = LoggerFactory.getLogger(loggerId)
+  private[ezlogging] lazy val logger: EzLogger = loggerFactory.buildLogger(loggerId)
 
   // Using reference parameters avoids "delazying" of lazy parameter if not required:
   // the string message parameter is computed only if proper log level is enabled.

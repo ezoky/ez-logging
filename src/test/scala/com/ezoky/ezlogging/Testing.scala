@@ -1,7 +1,6 @@
 package com.ezoky.ezlogging
 
 import org.mockito.MockitoSugar
-import org.slf4j.Logger
 
 import scala.reflect.runtime.universe.TypeTag
 
@@ -12,65 +11,64 @@ import scala.reflect.runtime.universe.TypeTag
 object Testing
   extends MockitoSugar {
 
-  def loggerFixture(loggerId: String,
-                    isSomethingEnabled: Logger => Boolean,
-                    isEnabled: Boolean): Logger = {
-    val underlying = mock[org.slf4j.Logger]
-    when(underlying.getName).thenReturn(loggerId)
+  def loggerFactoryFixture(isSomethingEnabled: EzLogger => Boolean,
+                           isEnabled: Boolean): EzLoggerFactory = {
+
+    val underlying: EzLogger = mock[EzLogger]
     when(isSomethingEnabled(underlying)).thenReturn(isEnabled)
-    underlying
+
+    new EzLoggerFactory {
+      override def buildLogger(loggerId: String): EzLogger = {
+        when(underlying.id).thenReturn(loggerId)
+        underlying
+      }
+    }
   }
+
+
 
   object EzLoggable {
 
-    def apply(id: String): EzLoggable =
-      new EzLoggable {
-        override protected lazy val loggerId: String = id
-      }
+//    def apply(id: String): EzLoggable =
+//      new EzLoggable {
+//        override protected lazy val loggerId: String = id
+//      }
 
-    def apply(sl4JLogger: Logger): EzLoggable =
+    def apply(id: String,
+              factory: EzLoggerFactory): EzLoggable =
+
       new EzLoggable {
-        override private[ezlogging] lazy val logger: Logger = sl4JLogger
-        override protected lazy val loggerId: String = sl4JLogger.getName
+        override protected val loggerId: String = id
+        override implicit protected val loggerFactory: EzLoggerFactory = factory
       }
 
     def apply(loggerId: String,
-              isSomethingEnabled: Logger => Boolean,
+              isSomethingEnabled: EzLogger => Boolean,
               isEnabled: Boolean): EzLoggable = {
-      val fixture = loggerFixture(loggerId, isSomethingEnabled, isEnabled)
-      Testing.EzLoggable(fixture)
+      val fixture = loggerFactoryFixture(isSomethingEnabled, isEnabled)
+      Testing.EzLoggable(loggerId, fixture)
     }
   }
 
   object EzLoggableType {
 
-    def apply[T: TypeTag](sl4JLogger: Logger): EzLoggableType[T] =
-      new EzLoggableType[T] {
-        override private[ezlogging] lazy val logger: Logger = sl4JLogger
-        override protected lazy val loggerId: String = sl4JLogger.getName
-      }
-
-    import scala.reflect.runtime.universe.typeOf
-
-    def apply[T: TypeTag](isSomethingEnabled: Logger => Boolean,
-                          isEnabled: Boolean): EzLoggableType[T] = {
-      val fixture = loggerFixture(typeOf[T].typeSymbol.fullName, isSomethingEnabled, isEnabled)
-      Testing.EzLoggableType(fixture)
+    def apply[T: TypeTag](isSomethingEnabled: EzLogger => Boolean,
+                          isEnabled: Boolean): (EzLoggerFactory, EzLogger) = {
+      implicit val ezLoggerFactory = loggerFactoryFixture(isSomethingEnabled, isEnabled)
+      val loggableFixture = new EzLoggableType[T]
+      (ezLoggerFactory, loggableFixture.logger)
     }
   }
 
-  object LogLevel {
+  object Log {
 
-    def apply[T: TypeTag](loggableMethod: EzLoggable => (=> String) => Unit,
-                          isSomethingEnabled: Logger => Boolean,
-                          isLogLevelEnabled: Boolean): (LogLevel, Logger) = {
-      val loggableFixture = Testing.EzLoggableType[T](isSomethingEnabled, isLogLevelEnabled)
-      (new LogLevel {
-        override def isEnabled: Boolean = isLogLevelEnabled
-        protected lazy val loggable: EzLoggableType[T] = loggableFixture
-        override val log: (=> String) => Unit = loggableMethod(loggable)
-      }, loggableFixture.logger)
+    def apply[T: TypeTag](logLevel: LogLevel,
+                          isSomethingEnabled: EzLogger => Boolean,
+                          isLogLevelEnabled: Boolean): (Log, EzLogger) = {
+      implicit val fixture = loggerFactoryFixture(isSomethingEnabled, isLogLevelEnabled)
+      val log = logLevel.buildLog[T]
+      val loggableFixture = new EzLoggableType[T]
+      (log, loggableFixture.logger)
     }
   }
-
 }

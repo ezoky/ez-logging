@@ -4,7 +4,7 @@
 
 package com.ezoky.ezlogging
 
-import com.ezoky.ezlogging.LogLevel.{Debug => DebugLogger, Error => ErrorLogger, Info => InfoLogger, NoLog => NoLogger, Trace => TraceLogger, Warn => WarnLogger}
+import com.ezoky.ezlogging.LogLevel.{Error => ErrorLevel}
 
 import scala.util.{Failure, Success, Try}
 
@@ -20,39 +20,7 @@ import scala.util.{Failure, Success, Try}
  * @author gweinbach on 13/10/2020
  * @since 0.1.0
  */
-trait Safe
-
 object Safe {
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val NoLog = NoLogger
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val Trace = TraceLogger[Safe]()
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val Debug = DebugLogger[Safe]()
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val Info = InfoLogger[Safe]()
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val Warn = WarnLogger[Safe]()
-
-  /**
-   * Simple placeholder for `logLevel` parameter in `Safe` methods
-   */
-  val Error = ErrorLogger[Safe]()
 
   /**
    * First string is substituted with Throwable class name.
@@ -66,9 +34,10 @@ object Safe {
    * Returned `Left` message is lazy to avoid useless computation if message is not further used.
    */
   def trialFromTry[T](tryT: => Try[T],
-                      logLevel: LogLevel = Error,
+                      logLevel: LogLevel = ErrorLevel,
                       showException: Boolean = true,
-                      messageTemplate: => String = DefaultMessageTemplate): Either[() => String, T] =
+                      messageTemplate: => String = DefaultMessageTemplate)
+                     (implicit loggerFactory: EzLoggerFactory): Either[() => String, T] =
 
     tryT match {
       case Failure(exception) =>
@@ -85,7 +54,7 @@ object Safe {
               exceptionMessage
             )
           ).getOrElse {
-            Error.log(s"Bad message template: '$messageTemplate'. It should contain at most 2 string placeholders (%s).")
+            ErrorLevel.buildLog[Safe.type].log(s"Bad message template: '$messageTemplate'. It should contain at most 2 string placeholders (%s).")
             DefaultMessageTemplate.format(
               exceptionClassName,
               exceptionMessage
@@ -94,9 +63,9 @@ object Safe {
         }
 
         if (showException) {
-          Error.logException(lazyMessage(), exception)
+          ErrorLevel.buildLog[Safe.type].logException(lazyMessage(), exception)
         }
-        logLevel.log(lazyMessage())
+        logLevel.buildLog[Safe.type].log(lazyMessage())
 
         Left(lazyMessage)
 
@@ -111,9 +80,10 @@ object Safe {
    * Transforms the Left into a (lazy) logged message.
    */
   def trialFromEither[E <: Throwable, T](eitherT: => Either[E, T],
-                                         logLevel: LogLevel = Error,
+                                         logLevel: LogLevel = ErrorLevel,
                                          showException: Boolean = true,
-                                         messageTemplate: => String = DefaultMessageTemplate): Either[() => String, T] = {
+                                         messageTemplate: => String = DefaultMessageTemplate)
+                                        (implicit loggerFactory: EzLoggerFactory): Either[() => String, T] = {
     val tryT: Try[T] = eitherT.fold(
       failed =>
         Failure(failed),
@@ -130,7 +100,7 @@ object Safe {
   }
 
   /**
-   * Catches any exception in `toTry` and logs a message according to given LogLevel.
+   * Catches any exception in `toTry` and logs a message according to given Log.
    * Possibly logged Message is returned in `Left`.
    * In case of failure, the returned message is lazy to avoid uselessly building a potentially costly message in case
    * it is not used.
@@ -140,9 +110,10 @@ object Safe {
    *
    */
   def trial[T](toTry: => T,
-               logLevel: LogLevel = Error,
+               logLevel: LogLevel = ErrorLevel,
                showException: Boolean = true,
-               messageTemplate: => String = DefaultMessageTemplate): Either[() => String, T] =
+               messageTemplate: => String = DefaultMessageTemplate)
+              (implicit loggerFactory: EzLoggerFactory): Either[() => String, T] =
     trialFromTry(
       Try(toTry),
       logLevel,
@@ -152,12 +123,12 @@ object Safe {
 
 
   /**
-   * Catches any exception in `toTry` and logs a message according to given LogLevel.
+   * Catches any exception in `toTry` and logs a message according to given Log.
    *
    * @param toTry           The expression we want to try safely
    * @param logLevel        The log level we want the message to be logged in case of failure. Default is `Error`
-   *                        An alternate LogLevel can be provided: either a predefined one (see default constant values
-   *                        on `Safe` object) or any custom LogLevel object (that can be defined for a specific type
+   *                        An alternate Log can be provided: either a predefined one (see default constant values
+   *                        on `Safe` object) or any custom Log object (that can be defined for a specific type
    *                        instead of `Safe`).
    *                        NB default log level is not defined for type `T` but for type `Safe`.
    * @param showException   A flag determining if the Exception message will be logged (always at Error level).
@@ -169,9 +140,10 @@ object Safe {
    * @return
    */
   def apply[T](toTry: => T,
-               logLevel: LogLevel = Error,
+               logLevel: LogLevel = ErrorLevel,
                showException: Boolean = true,
-               messageTemplate: => String = DefaultMessageTemplate): Option[T] =
+               messageTemplate: => String = DefaultMessageTemplate)
+              (implicit loggerFactory: EzLoggerFactory): Option[T] =
     trial[T](
       toTry,
       logLevel,

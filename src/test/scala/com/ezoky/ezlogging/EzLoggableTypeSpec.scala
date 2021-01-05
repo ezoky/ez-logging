@@ -15,6 +15,7 @@ class EzLoggableTypeSpec
   extends AnyWordSpec
     with MockitoSugar {
 
+  import slf4j._
   import EzLoggableType._
 
   class A {
@@ -29,7 +30,7 @@ class EzLoggableTypeSpec
       val ezLogger = new EzLoggableType[A]
 
       val slf4JLogger = ezLogger.logger
-      assert(slf4JLogger.getName == typeOf[A].typeSymbol.fullName)
+      assert(slf4JLogger.id == typeOf[A].typeSymbol.fullName)
     }
   }
 

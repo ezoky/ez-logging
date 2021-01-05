@@ -15,7 +15,7 @@ homepage := Some(url("https://github.com/ezoky/ez-logging"))
 scmInfo := Some(ScmInfo(url("https://github.com/ezoky/ez-logging"), "git@github.com:ezoky/ez-logging.git"))
 developers := List(Developer("gweinbach", "Grégory Weinbach", "gweinbach@ezoky.com", url("https://github.com/gweinbach")))
 
-lazy val distVersion = sys.props.getOrElse("distVersion", "0.1.0-SNAPSHOT")
+lazy val distVersion = sys.props.getOrElse("distVersion", "0.2.0-SNAPSHOT")
 
 ThisBuild / version := distVersion
 
@@ -38,7 +38,7 @@ ThisBuild / scalacOptions ++= Seq(
   "-unchecked", // warns about unchecked type parameters
   "-feature", // warns about misused language features
   "-Xlint", // enables handy linter warnings
-  "-Xfatal-warnings", // turns compiler warnings into errors
+//  "-Xfatal-warnings", // turns compiler warnings into errors
 )
 
 // Enables SemanticDB compiler for Scalafix

@@ -17,15 +17,21 @@ class SafeSpec
   "Trying something that succeeds" should {
     "return a non empty result" in {
 
+      import slf4j._
+
       val successfulResult = Safe(6.0 / 2)
       assert(successfulResult === Some(3.0))
     }
     "return a Right(value) when asked for Either" in {
 
+      import slf4j._
+
       val successfulResult = Safe.trial(6.0 / 2)
       assert(successfulResult === Right(3.0))
     }
     "return a Right(value) when given a Right(value)" in {
+
+      import slf4j._
 
       val successfulEntry: Either[Throwable, Double] = Right(6.0 / 2)
       val successfulResult = Safe.trialFromEither(successfulEntry)
@@ -34,16 +40,16 @@ class SafeSpec
 
     "result in no logged message" in {
 
-      val (logLevel, logger) = Testing.LogLevel[Int](l => l.info _, _.isInfoEnabled, isLogLevelEnabled = true)
+      val (loggerFactory, logger) = Testing.EzLoggableType[Int](_.isInfoEnabled, isEnabled = true)
 
       val successfulResult = Safe(
         {
           val x = "Hello World !"
           3
         },
-        logLevel,
+        LogLevel.Info,
         showException = false
-      )
+      )(loggerFactory)
 
       assert(successfulResult === Some(3))
       verify(logger, never).info(anyString)
@@ -54,11 +60,15 @@ class SafeSpec
 
     "return an empty result" in {
 
+      import slf4j._
+
       val failingResult = Safe(throw new ArrayIndexOutOfBoundsException(10))
 
       assert(failingResult.isEmpty)
     }
     "return a Left(...) when asked for Either" in {
+
+      import slf4j._
 
       val indexOutOfRange = 10
       val exception = new ArrayIndexOutOfBoundsException(indexOutOfRange)
@@ -70,6 +80,8 @@ class SafeSpec
       assert(failingResult.left.toOption.get() === expectedMessage)
     }
     "return a Left(message) when given a Left(throwable)" in {
+
+      import slf4j._
 
       val indexOutOfRange = 10
       val exception = new ArrayIndexOutOfBoundsException(indexOutOfRange)
@@ -84,15 +96,15 @@ class SafeSpec
 
     "log an error message if log level is enabled" in {
 
-      val (logLevel, logger) = Testing.LogLevel[Int](l => l.debug _, _.isDebugEnabled, isLogLevelEnabled = true)
+      val (loggerFactory, logger) = Testing.EzLoggableType[Int](_.isDebugEnabled, isEnabled = true)
 
       val exceptionMessage = "Something is null"
       val failingResult = Safe(
         throw new NullPointerException(exceptionMessage),
-        logLevel,
+        LogLevel.Debug,
         showException = false,
         messageTemplate = "this message will be logged %s: %s"
-      )
+      )(loggerFactory)
 
       val expectedMessage = s"this message will be logged ${classOf[NullPointerException].getName}: $exceptionMessage"
 
@@ -103,15 +115,15 @@ class SafeSpec
 
     "log a (default) error message even if message template is bad" in {
 
-      val (logLevel, logger) = Testing.LogLevel[Int](l => l.trace _, _.isTraceEnabled, isLogLevelEnabled = true)
+      val (loggerFactory, logger) = Testing.EzLoggableType[Int](_.isTraceEnabled, isEnabled = true)
 
       val exceptionMessage = "Something is null"
       val failingResult = Safe(
         throw new NullPointerException(exceptionMessage),
-        logLevel,
+        LogLevel.Trace,
         showException = true,
         messageTemplate = "this message has too many string placeholders %s: %s (%s)"
-      )
+      )(loggerFactory)
 
       val expectedMessage = s"${classOf[NullPointerException].getName}: $exceptionMessage"
 
@@ -122,20 +134,20 @@ class SafeSpec
 
     "not compute error message if log level is not enabled" in {
 
-      val (logLevel, logger) = Testing.LogLevel[Int](l => l.warn _, _.isWarnEnabled, isLogLevelEnabled = false)
+      val (loggerFactory, logger) = Testing.EzLoggableType[Int](_.isWarnEnabled, isEnabled = false)
 
       val sleepTimeInMS = 10000L
       val timestampBefore = System.currentTimeMillis()
 
       val failingResult = Safe(
         throw new NullPointerException(),
-        logLevel,
+        LogLevel.Warn,
         showException = false,
         messageTemplate = {
           Thread.sleep(sleepTimeInMS)
           "this message will not be logged %s: %s"
         }
-      )
+      )(loggerFactory)
 
       val timestampAfter = System.currentTimeMillis()
 

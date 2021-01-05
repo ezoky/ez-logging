@@ -36,15 +36,17 @@ import scala.reflect.runtime.universe.TypeTag
  * @author gweinbach on 14/10/2020
  * @since 0.1.0
  */
-class EzLoggableType[T: TypeTag]
+class EzLoggableType[T: TypeTag](implicit override protected val loggerFactory: EzLoggerFactory)
   extends EzLoggable {
 
-  override protected lazy val loggerId: String = implicitly[TypeTag[T]].tpe.typeSymbol.fullName
+  override protected lazy val loggerId: String =
+    implicitly[TypeTag[T]].tpe.typeSymbol.fullName
 }
 
 object EzLoggableType {
 
   implicit class EzLogger[T: TypeTag](t: T)
+                                     (implicit loggerFactory: EzLoggerFactory)
     extends EzLoggableType[T]
 
 }

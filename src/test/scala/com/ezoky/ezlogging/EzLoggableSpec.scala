@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.MockitoSugar
 import org.scalatest.wordspec.AnyWordSpec
-import org.slf4j.{Logger => Underlying}
+import com.ezoky.ezlogging.{EzLogger => Underlying}
 
 /**
  * These tests are adapted from `scala-logging` ([[https://github.com/lightbend/scala-logging]]).
